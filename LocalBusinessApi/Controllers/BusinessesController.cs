@@ -17,9 +17,17 @@ namespace LocalBusinessApi.Controllers
 
     //GET api/businesses
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Business>>> Get()
+    public async Task<ActionResult<IEnumerable<Business>>> Get(string category)
     {
-      return await _db.Businesses.ToListAsync();
+      IQueryable<Business> query = _db.Businesses.AsQueryable();
+
+    //GET api/businesses?category=restaurant
+      if (category != null)
+      {
+        query = query.Where(entry => entry.Category == category);
+      }
+
+      return await query.ToListAsync();
     }
 
     //GET api/businesses/{id}
