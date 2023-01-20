@@ -2,10 +2,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using LocalBusinessApi.Models;
 
-namespace LocalBusinessApi.Controllers
+namespace LocalBusinessApi.Controllers.v2
 {
-  [Route("api/[controller]")]
   [ApiController]
+  [Route("api/v{version:apiVersion}/[controller]")]
+  [ApiVersion("2.0")]
   public class BusinessesController : ControllerBase
   {
     private readonly LocalBusinessApiContext _db;
@@ -15,22 +16,28 @@ namespace LocalBusinessApi.Controllers
       _db = db;
     }
 
-    //GET api/businesses
+    //GET api/v2/businesses
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Business>>> Get(string category)
+    public async Task<ActionResult<IEnumerable<Business>>> Get(string category, string name)
     {
       IQueryable<Business> query = _db.Businesses.AsQueryable();
 
-    //GET api/businesses?category=restaurant
+    //GET api/v2/businesses?category=restaurant
       if (category != null)
       {
         query = query.Where(entry => entry.Category == category);
       }
 
+    //GET api/v2/businesses?name=nameOfRestaurant
+      if (name != null)
+      {
+        query = query.Where(entry => entry.Name == name);
+      }
+
       return await query.ToListAsync();
     }
 
-    //GET api/businesses/{id}
+    //GET api/v2/businesses/{id}
     [HttpGet("{id}")]
     public async Task<ActionResult<Business>> GetBusiness(int id)
     {
@@ -44,7 +51,7 @@ namespace LocalBusinessApi.Controllers
       return business;
     }
 
-    //POST api/businesses
+    //POST api/v2/businesses
     [HttpPost]
     public async Task<ActionResult<Business>> Post(Business business)
     {
@@ -53,7 +60,7 @@ namespace LocalBusinessApi.Controllers
       return CreatedAtAction(nameof(GetBusiness), new { id = business.BusinessId }, business);
     }
 
-    //PUT: api/businesses/{id}
+    //PUT: api/v2/businesses/{id}
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(int id, Business business)
     {
@@ -88,7 +95,7 @@ namespace LocalBusinessApi.Controllers
       return _db.Businesses.Any(e => e.BusinessId == id);
     }
 
-    //Delete: api/businesses/{id}
+    //Delete: api/v2/businesses/{id}
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteBusiness(int id)
     {
