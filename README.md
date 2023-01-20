@@ -172,7 +172,6 @@ GET http://localhost:5000/api/v1/businesses
 
 ## License
 
-
 MIT License
 
 Copyright (c) 2023 Henry Sullivan
